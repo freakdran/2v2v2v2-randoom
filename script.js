@@ -21,7 +21,7 @@ window.onload = function reload() {
     document.getElementById('buttonsWrapper').classList.add('hidden');
     document.getElementById('inputWrapper').classList.add('hidden');
 
-    fillResult(players);
+    fillResult(players, 0);
   }
 };
 
@@ -68,7 +68,7 @@ function rollAll() {
   sessionStorage.setItem('rollAllUsed', true);
 }
 
-function fillResult(players) {
+function fillResult(players, timeout = 2100) {
   document.getElementById('mainBody').classList.add('animation');
 
   const url = `${window.location.href}?x=${generateQuery(players)}`;
@@ -128,7 +128,7 @@ function fillResult(players) {
       parseInt(counter) + 1
     }`;
     document.getElementById('url').textContent = url;
-  }, 2100);
+  }, timeout);
 }
 
 function copyUrl() {
