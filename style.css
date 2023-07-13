@@ -1,5 +1,35 @@
 .playerInput {
-  background-color: white;
+  padding-bottom: 10px;
+}
+
+.inputFlex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.player {
+  flex: 1;
+  flex-basis: 20%;
+  margin: 5px;
+  background-color: #005a82;
+  border: none;
+  outline: none;
+  color: #c8aa6e;
+  font-size: 15px;
+  padding: 0 15px;
+  height: 22px;
+  border-radius: 11px;
+  border: 1px solid #c8aa6e;
+}
+
+.player:focus {
+  outline: 1px double #c8aa6e;
+}
+
+.buttons {
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .result,
@@ -8,17 +38,20 @@
   flex-wrap: wrap;
 }
 
-.team {
-  width: 50%;
-  flex: calc(50% - 20px);
-  border: 1px solid black;
-  padding: 5px;
-  margin-bottom: 10px;
+.hidden {
+  visibility: hidden;
 }
 
-.team:nth-child(2n) {
-  margin-left: 10px;
+.team {
+  width: 50%;
+  flex: 1;
+  flex-basis: 45%;
+  border: 1px solid #c8aa6e;
+  padding: 5px;
+  margin: 5px;
+  color: #c8aa6e;
 }
+
 
 .player1,
 .player2 {
@@ -28,10 +61,45 @@
   align-items: center;
 }
 
-h3 {
+h2 {
   text-align: center;
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background-color: #0a1428;
+}
+
+.buttons > button {
+  background-color: #091428;
+  border: 2px solid #c89b3c;
+  height: 36px;
+  width: 150px;
+  border-radius: 18px;
+  font-size: 19px;
+  margin: 5px;
+  color: #c89b3c;
+}
+
+.buttons > button:disabled {
+  background-color: #1e2328;
+  color: #a09b8c;
+  border-color: #a09b8c;
+}
+
+.animation {
+  background: linear-gradient(135deg, #0a1428, #0a1428, #005a82, #0a1428, #0a1428, #0a1428, #0a1428);
+  background-size: 500% 500%;
+
+  animation: AnimationName 5s;
+}
+
+@keyframes AnimationName {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 100% 100%;
+  }
 }
