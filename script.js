@@ -125,7 +125,7 @@ function fillResult(players, timeout = 2100) {
     document.getElementById('counter').innerHTML = `${text}: ${
       parseInt(counter) + 1
     }`;
-    document.getElementById('url').textContent = url;
+    document.getElementById('url').innerHTML = `${url}<span class="tooltip">Copy to clipboard</span>`;
   }, timeout);
 }
 
