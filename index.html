@@ -1,55 +1,28 @@
 <html>
   <head>
-    <link
-      rel="stylesheet"
-      href="style.css"
-    />
+    <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
   <body id="mainBody">
     <div class="main">
-      <div class="playerInput">
+      <div class="playerInput" id="inputWrapper">
         <div class="inputFlex">
-          <input
-            class="player"
-            maxlength="25"
-          />
-          <input
-            class="player"
-            maxlength="25"
-          />
-          <input
-            class="player"
-            maxlength="25"
-          />
-          <input
-            class="player"
-            maxlength="25"
-          />
-          <input
-            class="player"
-            maxlength="25"
-          />
-          <input
-            class="player"
-            maxlength="25"
-          />
-          <input
-            class="player"
-            maxlength="25"
-          />
-          <input
-            class="player"
-            maxlength="25"
-          />
+          <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
         </div>
       </div>
-      <div class="buttons">
+      <div class="buttons" id="buttonsWrapper">
         <button onclick="rollAll()">Roll All</button>
-        <button onclick="rollChamps()">Roll Champs</button>
+        <button onclick="rollChamps()" disabled title="Keep teams">Roll Champs</button>
         <!-- Add hover help text 'Keeps teams'-->
       </div>
-      <div class="result" id="resultBody">
+      <div class="result hidden" id="resultBody">
         <div class="team team1">
           <h2>Team 1</h2>
           <div class="players">
@@ -79,6 +52,14 @@
           </div>
         </div>
       </div>
+      <footer class="footer" id="footer">
+        <div class="counter" id="counter">Runde: 0</div>
+        <div class="hash" id="hash"></div>
+        <div class="url" id="url" onclick="copyUrl()">
+          asdasdasdfas dasd asdas das d as da sd
+          <span class="tooltip">Copy to clipboard</span>
+        </div>
+      </footer>
     </div>
   </body>
 </html>

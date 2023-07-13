@@ -1,6 +1,28 @@
 window.onload = function reload() {
   sessionStorage.removeItem('rollAllUsed');
-  document.getElementById('resultBody').classList.add('hidden');
+  document.getElementById('hash').innerHTML = Math.floor(
+    Math.random() * Date.now()
+  ).toString(36);
+
+  const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+  });
+  if (params.x && checkParams(params.x)) {
+    
+    const players = params.x.split('--').map((x) => {
+      const a = x.split('-');
+      return { name: a[0], champ: parseInt(a[1]) };
+    });
+    if(players.length < 8) {
+      return;
+    }
+
+    document.getElementById('footer').classList.add('hidden');
+    document.getElementById('buttonsWrapper').classList.add('hidden');
+    document.getElementById('inputWrapper').classList.add('hidden');
+
+    fillResult(players);
+  }
 };
 
 function rollChamps() {
@@ -9,7 +31,9 @@ function rollChamps() {
     const players = JSON.parse(sessionStorage.getItem('players'));
     const newPlayers = players.map((player) => {
       const newChamp = { ...player };
-      newChamp.champ = Math.floor(Math.random() * Object.keys(allChamps).length + 1);
+      newChamp.champ = Math.floor(
+        Math.random() * Object.keys(allChamps).length + 1
+      );
       return newChamp;
     });
 
@@ -39,19 +63,7 @@ function rollAll() {
   const shuffledPlayers = players.sort((a, b) => 0.5 - Math.random());
   sessionStorage.setItem('players', JSON.stringify(shuffledPlayers));
 
-  // document.getElementById('mainBody').classList.add('animation');
-  // const b1 = document.getElementsByClassName('buttons').item(0).children.item(0);
-  // const b2 = document.getElementsByClassName('buttons').item(0).children.item(1);
-  // b1.disabled = true;
-  // b2.disabled = true;
-
-  // setTimeout(() => {
-  //   document.getElementById('mainBody').classList.remove('animation');
   fillResult(shuffledPlayers);
-  //   document.getElementById('resultBody').classList.remove('hidden');
-  //   b1.disabled = false;
-  //   b2.disabled = false;
-  // }, 2500);
 
   sessionStorage.setItem('rollAllUsed', true);
 }
@@ -59,15 +71,23 @@ function rollAll() {
 function fillResult(players) {
   document.getElementById('mainBody').classList.add('animation');
 
-  const b1 = document.getElementsByClassName('buttons').item(0).children.item(0);
-  const b2 = document.getElementsByClassName('buttons').item(0).children.item(1);
+  const url = `${window.location.href}?x=${generateQuery(players)}`;
+
+  const b1 = document
+    .getElementsByClassName('buttons')
+    .item(0)
+    .children.item(0);
+  const b2 = document
+    .getElementsByClassName('buttons')
+    .item(0)
+    .children.item(1);
   b1.disabled = true;
   b2.disabled = true;
 
-  const htmlTemplate = `<div style="font-weight:bold;color:#c89b3c">
+  const htmlTemplate = `<div class="champName" >
       $champName
     </div>
-    <div style="font-weight:bold;font-size:13px;color:#c89b3c">
+    <div class="champTitle" >
       $champTitle
     </div>
     <img src="./assets/$champImage.jpg" width="100" height="100">
@@ -80,23 +100,69 @@ function fillResult(players) {
     b1.disabled = false;
     b2.disabled = false;
     for (let i = 0; i < teams.length; i++) {
-      const player1 = players.pop();
-      const player2 = players.pop();
+      const player1 = players.shift();
+      const player2 = players.shift();
       if (player1.champ === player2.champ) {
-        player2.champ = player2.champ + 1 < allChamps.length ? player2.champ + 1 : player2.champ - 1;
+        player2.champ =
+          player2.champ + 1 < allChamps.length
+            ? player2.champ + 1
+            : player2.champ - 1;
       }
-      teams.item(i).getElementsByClassName('player1').item(0).innerHTML = htmlTemplate
-        .replace('$champName', allChamps[player1.champ].name)
-        .replace('$champTitle', allChamps[player1.champ].title)
-        .replace('$champImage', player1.champ)
-        .replace('$name', player1.name);
-      teams.item(i).getElementsByClassName('player2').item(0).innerHTML = htmlTemplate
-        .replace('$champName', allChamps[player2.champ].name)
-        .replace('$champTitle', allChamps[player2.champ].title)
-        .replace('$champImage', player2.champ)
-        .replace('$name', player2.name);
+      teams.item(i).getElementsByClassName('player1').item(0).innerHTML =
+        htmlTemplate
+          .replace('$champName', allChamps[player1.champ].name)
+          .replace('$champTitle', allChamps[player1.champ].title)
+          .replace('$champImage', player1.champ)
+          .replace('$name', player1.name);
+      teams.item(i).getElementsByClassName('player2').item(0).innerHTML =
+        htmlTemplate
+          .replace('$champName', allChamps[player2.champ].name)
+          .replace('$champTitle', allChamps[player2.champ].title)
+          .replace('$champImage', player2.champ)
+          .replace('$name', player2.name);
     }
+    const [text, counter] = document
+      .getElementById('counter')
+      .innerHTML.split(': ');
+    document.getElementById('counter').innerHTML = `${text}: ${
+      parseInt(counter) + 1
+    }`;
+    document.getElementById('url').textContent = url;
   }, 2100);
+}
+
+function copyUrl() {
+  const url = document.getElementById('url').childNodes[0].nodeValue;
+  navigator.clipboard.writeText(url);
+}
+
+function checkParams(params) {
+  const players = params.split('--');
+
+  if(players.length < 8) {
+    return false;
+  }
+
+  let correct = true;
+  players.forEach(player => {
+    if(player.split('-').length !== 2) {
+      console.log('wrong player')
+      correct = false;
+    }
+  })
+  return correct;
+}
+
+function generateQuery(players) {
+  let { name, champ } = players[0];
+  let query = `${name}-${champ}`;
+  let i = 1;
+  do {
+    const { name, champ } = players[i];
+    query += `--${name}-${champ}`;
+    i++;
+  } while (i < players.length);
+  return query;
 }
 
 const allChamps = {
