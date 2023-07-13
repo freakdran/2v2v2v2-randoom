@@ -37,8 +37,6 @@ function rollChamps() {
       return newChamp;
     });
 
-    // animation
-
     fillResult(newPlayers);
   } else {
     alert('Please roll all first');
