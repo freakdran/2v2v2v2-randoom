@@ -15,39 +15,29 @@
           <input class="player" maxlength="25" />
           <input class="player" maxlength="25" />
           <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
+          <input class="player" maxlength="25" />
         </div>
       </div>
       <div class="buttons" id="buttonsWrapper">
-        <button onclick="rollAll()">Roll All</button>
-        <button onclick="rollChamps()" disabled title="Keep teams">Roll Champs</button>
+        <button onclick="aramRollAll()">Roll All</button>
+        <button hidden onclick="aramRollChamps()" disabled title="Keep teams">
+          Roll Champs
+        </button>
       </div>
       <div class="result hidden" id="resultBody">
         <div class="team team1">
           <h2>Team 1</h2>
-          <div class="players">
-            <div class="player1"></div>
-            <div class="player2"></div>
+          <div class="flexBox">
+            <div class="players"></div>
+            <div class="champs"></div>
           </div>
         </div>
         <div class="team team2">
           <h2>Team 2</h2>
-          <div class="players">
-            <div class="player1"></div>
-            <div class="player2"></div>
-          </div>
-        </div>
-        <div class="team team3">
-          <h2>Team 3</h2>
-          <div class="players">
-            <div class="player1"></div>
-            <div class="player2"></div>
-          </div>
-        </div>
-        <div class="team team4">
-          <h2>Team 4</h2>
-          <div class="players">
-            <div class="player1"></div>
-            <div class="player2"></div>
+          <div class="flexBox">
+            <div class="players"></div>
+            <div class="champs"></div>
           </div>
         </div>
       </div>

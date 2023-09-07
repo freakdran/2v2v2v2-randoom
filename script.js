@@ -8,12 +8,11 @@ window.onload = function reload() {
     get: (searchParams, prop) => searchParams.get(prop),
   });
   if (params.x && checkParams(params.x)) {
-    
     const players = params.x.split('--').map((x) => {
       const a = x.split('-');
       return { name: a[0], champ: parseInt(a[1]) };
     });
-    if(players.length < 8) {
+    if (players.length < 8) {
       return;
     }
 
@@ -125,7 +124,9 @@ function fillResult(players, timeout = 2100) {
     document.getElementById('counter').innerHTML = `${text}: ${
       parseInt(counter) + 1
     }`;
-    document.getElementById('url').innerHTML = `${url}<span class="tooltip">Copy to clipboard</span>`;
+    document.getElementById(
+      'url'
+    ).innerHTML = `${url}<span class="tooltip">Copy to clipboard</span>`;
   }, timeout);
 }
 
@@ -137,17 +138,17 @@ function copyUrl() {
 function checkParams(params) {
   const players = params.split('--');
 
-  if(players.length < 8) {
+  if (players.length < 8) {
     return false;
   }
 
   let correct = true;
-  players.forEach(player => {
-    if(player.split('-').length !== 2) {
-      console.log('wrong player')
+  players.forEach((player) => {
+    if (player.split('-').length !== 2) {
+      console.log('wrong player');
       correct = false;
     }
-  })
+  });
   return correct;
 }
 
@@ -161,6 +162,132 @@ function generateQuery(players) {
     i++;
   } while (i < players.length);
   return query;
+}
+
+// ARAM BLOCK
+function aramRollAll() {
+  const playerInput = document.getElementsByClassName('player');
+  let players = [];
+  for (let i = 0; i < playerInput.length; i++) {
+    const playername = playerInput.item(i).value;
+    if (playername) {
+      players.push(playername);
+    }
+  }
+  const shuffledPlayers = players.sort((a, b) => 0.5 - Math.random());
+  sessionStorage.setItem('players', JSON.stringify(shuffledPlayers));
+
+  aramFillResult(shuffledPlayers);
+
+  sessionStorage.setItem('rollAllUsed', true);
+}
+
+function aramRollChamps() {
+  const rollAllUsed = sessionStorage.getItem('rollAllUsed');
+  if (rollAllUsed) {
+    const players = JSON.parse(sessionStorage.getItem('players'));
+    const newPlayers = players.map((player) => {
+      const newChamp = { ...player };
+      newChamp.champ1 = Math.floor(
+        Math.random() * Object.keys(allChamps).length + 1
+      );
+      newChamp.champ2 = Math.floor(
+        Math.random() * Object.keys(allChamps).length + 1
+      );
+      return newChamp;
+    });
+
+    aramFillResult(newPlayers);
+  } else {
+    alert('Please roll all first');
+  }
+}
+
+function aramFillResult(players, timeout = 2100) {
+  document.getElementById('mainBody').classList.add('animation');
+
+  // const url = `${window.location.href}?x=${generateQuery(players)}`;
+
+  const b1 = document
+    .getElementsByClassName('buttons')
+    .item(0)
+    .children.item(0);
+  const b2 = document
+    .getElementsByClassName('buttons')
+    .item(0)
+    .children.item(1);
+  b1.disabled = true;
+  b2.disabled = true;
+
+  const htmlTemplateChamps = `<div class="champName">
+      $champName
+    </div>
+    <div class="champTitle" >
+      $champTitle
+    </div>
+    <img src="../assets/$champImage.jpg" width="100" height="100">`;
+
+  const teams = document.getElementsByClassName('team');
+
+  setTimeout(() => {
+    document.getElementById('mainBody').classList.remove('animation');
+    document.getElementById('resultBody').classList.remove('hidden');
+    b1.disabled = false;
+    b2.disabled = false;
+
+    const team1 = players.slice(0, Math.ceil(players.length / 2));
+    const team2 = players.slice(Math.ceil(players.length / 2));
+
+    const team1Champs = Array.from({ length: players.length }, () =>
+      Math.floor(Math.random() * Object.keys(allChamps).length + 1)
+    );
+    const team2Champs = Array.from({ length: players.length }, () =>
+      Math.floor(Math.random() * Object.keys(allChamps).length + 1)
+    );
+
+    let htmlPlayers1 = '';
+    let htmlPlayers2 = '';
+    team1.forEach((player) => (htmlPlayers1 += `<p>${player}<p>`));
+    team2.forEach((player) => (htmlPlayers2 += `<p>${player}<p>`));
+
+    teams.item(0).getElementsByClassName('players').item(0).innerHTML =
+      htmlPlayers1;
+    teams.item(1).getElementsByClassName('players').item(0).innerHTML =
+      htmlPlayers2;
+
+    let htmlChamps1 = '';
+    let htmlChamps2 = '';
+    team1Champs.forEach((champ) => {
+      console.log(champ);
+      console.log(allChamps[champ]);
+      htmlChamps1 += htmlTemplateChamps
+        .replace('$champName', allChamps[champ].name)
+        .replace('$champTitle', allChamps[champ].title)
+        .replace('$champImage', champ);
+    });
+    team2Champs.forEach((champ) => {
+      console.log(champ);
+      console.log(allChamps[champ]);
+      htmlChamps2 += htmlTemplateChamps
+        .replace('$champName', allChamps[champ].name)
+        .replace('$champTitle', allChamps[champ].title)
+        .replace('$champImage', champ);
+    });
+    teams.item(0).getElementsByClassName('champs').item(0).innerHTML =
+      htmlChamps1;
+    teams.item(1).getElementsByClassName('champs').item(0).innerHTML =
+      htmlChamps2;
+
+    const [text, counter] = document
+      .getElementById('counter')
+      .innerHTML.split(': ');
+    document.getElementById('counter').innerHTML = `${text}: ${
+      parseInt(counter) + 1
+    }`;
+    // document.getElementById(
+    //   'url'
+    // ).innerHTML = `${url}<span class="tooltip">Copy to clipboard</span>`;
+  }, timeout);
 }
 
 const allChamps = {
@@ -327,4 +454,5 @@ const allChamps = {
   161: { name: 'Zilean', title: 'the Chronokeeper' },
   162: { name: 'Zoe', title: 'the Aspect of Twilight' },
   163: { name: 'Zyra', title: 'Rise of the Thorns' },
+  164: { name: 'Naafiri', title: 'The Hound of a Hundred Bites' },
 };
