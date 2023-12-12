@@ -60,6 +60,8 @@ function rollAll() {
   const shuffledPlayers = players.sort((a, b) => 0.5 - Math.random());
   sessionStorage.setItem('players', JSON.stringify(shuffledPlayers));
 
+  console.log(shuffledPlayers);
+
   fillResult(shuffledPlayers);
 
   sessionStorage.setItem('rollAllUsed', true);
@@ -289,6 +291,7 @@ function aramFillResult(players, timeout = 2100) {
     // ).innerHTML = `${url}<span class="tooltip">Copy to clipboard</span>`;
   }, timeout);
 }
+
 
 // CHAMPS
 const allChamps = {

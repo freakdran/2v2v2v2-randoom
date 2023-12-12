@@ -1,0 +1,201 @@
+.playerInput {
+  padding-bottom: 10px;
+}
+
+.inputFlex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.player {
+  flex: 1;
+  flex-basis: 20%;
+  margin: 5px;
+  background-color: #005a82;
+  border: none;
+  outline: none;
+  color: #c8aa6e;
+  font-size: 15px;
+  padding: 0 15px;
+  height: 22px;
+  border-radius: 11px;
+  border: 1px solid #c8aa6e;
+}
+
+img {
+  border-radius: 7px;
+  border: 2px solid;
+}
+
+.champName {
+  font-weight: bold;
+  color: #c89b3c;
+}
+.champTitle {
+  font-weight: bold;
+  font-size: 13px;
+  color: #c89b3c;
+  padding-bottom: 4px;
+}
+
+.player:focus {
+  outline: 1px double #c8aa6e;
+}
+
+.buttons {
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.result,
+.players {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.team {
+  width: 50%;
+  flex: 1;
+  flex-basis: 45%;
+  border: 1px solid #c8aa6e;
+  padding: 5px;
+  margin: 5px;
+  color: #c8aa6e;
+}
+
+.player1,
+.player2 {
+  flex: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #0a1428;
+}
+
+.buttons > button {
+  background-color: #091428;
+  border: 2px solid #c89b3c;
+  height: 36px;
+  width: 150px;
+  border-radius: 18px;
+  font-size: 19px;
+  margin: 5px;
+  color: #c89b3c;
+}
+
+.buttons > button:disabled {
+  background-color: #1e2328;
+  color: #a09b8c;
+  border-color: #a09b8c;
+}
+
+.footer {
+  color: #c8aa6e;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  border-top: #c8aa6e 1px solid;
+  padding: 10px 0px;
+  left: 0px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.counter {
+  padding-left: 10px;
+}
+
+.hash {
+  padding-right: 10px;
+  flex: 1;
+  text-align: end;
+  color: #0a323c;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.url {
+  border: 1px solid;
+  width: 100%;
+  margin: 5px 10px;
+  padding: 3px;
+  border-radius: 2px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  height: 18px;
+}
+
+.url:hover {
+  border-color: #c89b3c;
+  color: #c89b3c;
+}
+
+.url:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.url .tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: 50px;
+  right: 15px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.url .tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.animation {
+  background: linear-gradient(
+    135deg,
+    #0a1428,
+    #0a1428,
+    #005a82,
+    #0a1428,
+    #0a1428,
+    #0a1428,
+    #0a1428
+  );
+  background-size: 500% 500%;
+
+  animation: AnimationName 5s;
+}
+
+@keyframes AnimationName {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 100% 100%;
+  }
+}

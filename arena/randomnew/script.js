@@ -1,8 +1,6 @@
 window.onload = function reload() {
   sessionStorage.removeItem('rollAllUsed');
-  document.getElementById('hash').innerHTML = Math.floor(
-    Math.random() * Date.now()
-  ).toString(36);
+  document.getElementById('hash').innerHTML = Math.floor(Math.random() * Date.now()).toString(36);
 
   const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
@@ -24,15 +22,14 @@ window.onload = function reload() {
   }
 };
 
+// TODO
 function rollChamps() {
   const rollAllUsed = sessionStorage.getItem('rollAllUsed');
   if (rollAllUsed) {
     const players = JSON.parse(sessionStorage.getItem('players'));
     const newPlayers = players.map((player) => {
       const newChamp = { ...player };
-      newChamp.champ = Math.floor(
-        Math.random() * Object.keys(allChamps).length + 1
-      );
+      newChamp.champ = Math.floor(Math.random() * Object.keys(allChamps).length + 1);
       return newChamp;
     });
 
@@ -43,8 +40,8 @@ function rollChamps() {
 }
 
 function rollAll() {
+  const players = [];
   const playerInput = document.getElementsByClassName('player');
-  let players = [];
   for (let i = 0; i < playerInput.length; i++) {
     const playername = playerInput.item(i).value;
     if (!playername) {
@@ -52,81 +49,99 @@ function rollAll() {
       players = [];
       return;
     }
-    players.push({
-      name: playerInput.item(i).value,
-      champ: Math.floor(Math.random() * Object.keys(allChamps).length + 1),
-    });
+    players.push(playerInput.item(i).value);
   }
+
+  // shuffle all players for random teams later
   const shuffledPlayers = players.sort((a, b) => 0.5 - Math.random());
   sessionStorage.setItem('players', JSON.stringify(shuffledPlayers));
 
-  fillResult(shuffledPlayers);
+  const teams = [];
+
+  // loop until there are no players left to put into a team
+  while (shuffledPlayers.length) {
+    let champs = [];
+    while (champs.length < 6) {
+      const champ = Math.floor(Math.random() * Object.keys(allChamps).length + 1);
+
+      // check if champ already in team
+      if (champs.indexOf(champ) === -1) {
+        champs.push(champ);
+      }
+    }
+    champs.sort((a, b) => a - b);
+    teams.push({
+      players: shuffledPlayers.splice(0, 2),
+      champs,
+    });
+  }
+
+  fillResult(teams);
 
   sessionStorage.setItem('rollAllUsed', true);
 }
 
-function fillResult(players, timeout = 2100) {
+function fillResult(teams, timeout = 2100) {
   document.getElementById('mainBody').classList.add('animation');
 
-  const url = `${window.location.href}?x=${generateQuery(players)}`;
+  // const url = `${window.location.href}?x=${generateQuery(teams)}`;
 
-  const b1 = document
-    .getElementsByClassName('buttons')
-    .item(0)
-    .children.item(0);
-  const b2 = document
-    .getElementsByClassName('buttons')
-    .item(0)
-    .children.item(1);
+  const b1 = document.getElementsByClassName('buttons').item(0).children.item(0);
+  const b2 = document.getElementsByClassName('buttons').item(0).children.item(1);
   b1.disabled = true;
   b2.disabled = true;
 
-  const htmlTemplate = `<div class="champName" >
+  const championTemplate = `<div class="championWrapper">
+    <div class="champName" >
       $champName
     </div>
     <div class="champTitle" >
       $champTitle
-    </div>
-    <img src="./assets/$champImage.jpg" width="100" height="100">
-    <p>$name</p>`;
-  const teams = document.getElementsByClassName('team');
+      </div>
+      <img src="../../assets/$champImage.jpg" width="100" height="100">
+  </div>`;
+  // const teams = document.getElementsByClassName('team');
 
   setTimeout(() => {
     document.getElementById('mainBody').classList.remove('animation');
     document.getElementById('resultBody').classList.remove('hidden');
     b1.disabled = false;
     b2.disabled = false;
-    for (let i = 0; i < teams.length; i++) {
-      const player1 = players.shift();
-      const player2 = players.shift();
-      if (player1.champ === player2.champ) {
-        player2.champ =
-          player2.champ + 1 < allChamps.length
-            ? player2.champ + 1
-            : player2.champ - 1;
-      }
-      teams.item(i).getElementsByClassName('player1').item(0).innerHTML =
-        htmlTemplate
-          .replace('$champName', allChamps[player1.champ].name)
-          .replace('$champTitle', allChamps[player1.champ].title)
-          .replace('$champImage', player1.champ)
-          .replace('$name', player1.name);
-      teams.item(i).getElementsByClassName('player2').item(0).innerHTML =
-        htmlTemplate
-          .replace('$champName', allChamps[player2.champ].name)
-          .replace('$champTitle', allChamps[player2.champ].title)
-          .replace('$champImage', player2.champ)
-          .replace('$name', player2.name);
-    }
-    const [text, counter] = document
-      .getElementById('counter')
-      .innerHTML.split(': ');
-    document.getElementById('counter').innerHTML = `${text}: ${
-      parseInt(counter) + 1
-    }`;
-    document.getElementById(
-      'url'
-    ).innerHTML = `${url}<span class="tooltip">Copy to clipboard</span>`;
+    teams.forEach((team, index) => {
+      const teamHTML = document.getElementById(`team${index + 1}`);
+      teamHTML.getElementsByClassName('players')[0].innerHTML = team.players.join('     ');
+
+      const trueChamps = [];
+      team.champs.forEach((champ) => {
+        trueChamps.push(
+          championTemplate
+            .replace('$champName', allChamps[champ].name)
+            .replace('$champTitle', allChamps[champ].title)
+            .replace('$champImage', champ),
+        );
+      });
+
+      teamHTML.getElementsByClassName('champions')[0].innerHTML = `${trueChamps.join('')}`;
+    });
+
+    // for (let i = 0; i < teams.length; i++) {
+    //   const player1 = players.shift();
+    //   const player2 = players.shift();
+    //   if (player1.champ === player2.champ) {
+    //     player2.champ = player2.champ + 1 < allChamps.length ? player2.champ + 1 : player2.champ - 1;
+    //   }
+    //   teams.item(i).getElementsByClassName('player1').item(0).innerHTML = championTemplate
+    //     .replace('$champName', allChamps[player1.champ].name)
+    //     .replace('$champTitle', allChamps[player1.champ].title)
+    //     .replace('$champImage', player1.champ)
+    //   teams.item(i).getElementsByClassName('player2').item(0).innerHTML = championTemplate
+    //     .replace('$champName', allChamps[player2.champ].name)
+    //     .replace('$champTitle', allChamps[player2.champ].title)
+    //     .replace('$champImage', player2.champ)
+    // }
+    // const [text, counter] = document.getElementById('counter').innerHTML.split(': ');
+    // document.getElementById('counter').innerHTML = `${text}: ${parseInt(counter) + 1}`;
+    // document.getElementById('url').innerHTML = `${url}<span class="tooltip">Copy to clipboard</span>`;
   }, timeout);
 }
 
@@ -183,24 +198,21 @@ function aramRollAll() {
 }
 
 function aramRollChamps() {
-  const rollAllUsed = sessionStorage.getItem('rollAllUsed');
-  if (rollAllUsed) {
-    const players = JSON.parse(sessionStorage.getItem('players'));
-    const newPlayers = players.map((player) => {
-      const newChamp = { ...player };
-      newChamp.champ1 = Math.floor(
-        Math.random() * Object.keys(allChamps).length + 1
-      );
-      newChamp.champ2 = Math.floor(
-        Math.random() * Object.keys(allChamps).length + 1
-      );
-      return newChamp;
-    });
+  alert('Currently disabled');
+  // const rollAllUsed = sessionStorage.getItem('rollAllUsed');
+  // if (rollAllUsed) {
+  //   const players = JSON.parse(sessionStorage.getItem('players'));
+  //   const newPlayers = players.map((player) => {
+  //     const newChamp = { ...player };
+  //     newChamp.champ1 = Math.floor(Math.random() * Object.keys(allChamps).length + 1);
+  //     newChamp.champ2 = Math.floor(Math.random() * Object.keys(allChamps).length + 1);
+  //     return newChamp;
+  //   });
 
-    aramFillResult(newPlayers);
-  } else {
-    alert('Please roll all first');
-  }
+  //   aramFillResult(newPlayers);
+  // } else {
+  //   alert('Please roll all first');
+  // }
 }
 
 function aramFillResult(players, timeout = 2100) {
@@ -208,14 +220,8 @@ function aramFillResult(players, timeout = 2100) {
 
   // const url = `${window.location.href}?x=${generateQuery(players)}`;
 
-  const b1 = document
-    .getElementsByClassName('buttons')
-    .item(0)
-    .children.item(0);
-  const b2 = document
-    .getElementsByClassName('buttons')
-    .item(0)
-    .children.item(1);
+  const b1 = document.getElementsByClassName('buttons').item(0).children.item(0);
+  const b2 = document.getElementsByClassName('buttons').item(0).children.item(1);
   b1.disabled = true;
   b2.disabled = true;
 
@@ -239,10 +245,10 @@ function aramFillResult(players, timeout = 2100) {
     const team2 = players.slice(Math.ceil(players.length / 2));
 
     const team1Champs = Array.from({ length: players.length }, () =>
-      Math.floor(Math.random() * Object.keys(allChamps).length + 1)
+      Math.floor(Math.random() * Object.keys(allChamps).length + 1),
     );
     const team2Champs = Array.from({ length: players.length }, () =>
-      Math.floor(Math.random() * Object.keys(allChamps).length + 1)
+      Math.floor(Math.random() * Object.keys(allChamps).length + 1),
     );
 
     let htmlPlayers1 = '';
@@ -250,40 +256,28 @@ function aramFillResult(players, timeout = 2100) {
     team1.forEach((player) => (htmlPlayers1 += `<p>${player}<p>`));
     team2.forEach((player) => (htmlPlayers2 += `<p>${player}<p>`));
 
-    teams.item(0).getElementsByClassName('players').item(0).innerHTML =
-      htmlPlayers1;
-    teams.item(1).getElementsByClassName('players').item(0).innerHTML =
-      htmlPlayers2;
+    teams.item(0).getElementsByClassName('players').item(0).innerHTML = htmlPlayers1;
+    teams.item(1).getElementsByClassName('players').item(0).innerHTML = htmlPlayers2;
 
     let htmlChamps1 = '';
     let htmlChamps2 = '';
     team1Champs.forEach((champ) => {
-      console.log(champ);
-      console.log(allChamps[champ]);
       htmlChamps1 += htmlTemplateChamps
         .replace('$champName', allChamps[champ].name)
         .replace('$champTitle', allChamps[champ].title)
         .replace('$champImage', champ);
     });
     team2Champs.forEach((champ) => {
-      console.log(champ);
-      console.log(allChamps[champ]);
       htmlChamps2 += htmlTemplateChamps
         .replace('$champName', allChamps[champ].name)
         .replace('$champTitle', allChamps[champ].title)
         .replace('$champImage', champ);
     });
-    teams.item(0).getElementsByClassName('champs').item(0).innerHTML =
-      htmlChamps1;
-    teams.item(1).getElementsByClassName('champs').item(0).innerHTML =
-      htmlChamps2;
+    teams.item(0).getElementsByClassName('champs').item(0).innerHTML = htmlChamps1;
+    teams.item(1).getElementsByClassName('champs').item(0).innerHTML = htmlChamps2;
 
-    const [text, counter] = document
-      .getElementById('counter')
-      .innerHTML.split(': ');
-    document.getElementById('counter').innerHTML = `${text}: ${
-      parseInt(counter) + 1
-    }`;
+    const [text, counter] = document.getElementById('counter').innerHTML.split(': ');
+    document.getElementById('counter').innerHTML = `${text}: ${parseInt(counter) + 1}`;
     // document.getElementById(
     //   'url'
     // ).innerHTML = `${url}<span class="tooltip">Copy to clipboard</span>`;
