@@ -455,4 +455,6 @@ const allChamps = {
   162: { name: 'Zoe', title: 'the Aspect of Twilight' },
   163: { name: 'Zyra', title: 'Rise of the Thorns' },
   164: { name: 'Naafiri', title: 'The Hound of a Hundred Bites' },
+  165: { name: 'Briar', title: 'the Restrained Hunger' },
+  166: { name: 'Hwei', title: 'the Visionary' },
 };
