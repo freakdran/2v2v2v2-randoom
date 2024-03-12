@@ -1,0 +1,29 @@
+#tickLength {
+  width: 500px;
+}
+
+#grid {
+  margin-top: 10px;
+}
+
+[type='checkbox'] {
+  margin: 0px;
+  width: 20px;
+  height: 20px;
+}
+
+[type='checkbox']::before {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  display: block;
+  content: '';
+  float: left;
+  z-index: 5;
+  position: relative;
+  border: 1px solid #eee;
+}
+
+input[type='checkbox']:checked::before {
+  background-color: #000;
+}

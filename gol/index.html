@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="style.css"
+    />
+    <script
+      src="script.js"
+      defer
+    ></script>
+  </head>
+  <body id="mainBody">
+    <div class="selection">
+      X
+      <input
+        id="xValue"
+        value="5"
+      />
+      <br />
+      Y
+      <input
+        id="yValue"
+        value="5"
+      />
+      <br />
+      Tick length
+      <input
+        type="range"
+        min="10"
+        max="5000"
+        value="2500"
+        step="1"
+        class="slider"
+        id="tickLength"
+      />
+      <output id="tickLengthValue"></output>
+      <br />
+      <button
+        type="button"
+        onclick="createGrid()"
+      >
+        Create grid
+      </button>
+      <button
+        type="button"
+        id="startButton"
+        onclick="startSimulation()"
+      >
+        Start simulation
+      </button>
+      <button
+        type="button"
+        id="pauseButton"
+        disabled
+        onclick="pauseSimulation()"
+      >
+        Pause simulation
+      </button>
+      <button
+        type="button"
+        id="iterateButton"
+        onclick="iterateOnce()"
+      >
+        IterateOnce
+      </button>
+    </div>
+
+    <div id="grid"></div>
+  </body>
+</html>
